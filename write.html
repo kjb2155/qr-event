@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>메시지 입력</title>
+</head>
+<body>
+  <h2>메시지를 입력하세요</h2>
+  <input type="text" id="msg" placeholder="내용 입력">
+  <button onclick="send()">보내기</button>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA5jr2U1r5FafSC6493ePuv-g6qtZ_iqyw",
+      authDomain: "quality-campaign.firebaseapp.com",
+      projectId: "quality-campaign",
+      storageBucket: "quality-campaign.firebasestorage.app",
+      messagingSenderId: "247809746725",
+      appId: "1:247809746725:web:7f8e0950a475793afe1ccc",
+      measurementId: "G-X9D2FWTB1T"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function send() {
+      const text = document.getElementById("msg").value;
+      if(text.trim() === "") return;
+
+      await addDoc(collection(db, "messages"), {
+        text: text,
+        time: Date.now()
+      });
+
+      alert("전송 완료!");
+      document.getElementById("msg").value = "";
+    }
+
+    window.send = send;
+  </script>
+</body>
+</html>

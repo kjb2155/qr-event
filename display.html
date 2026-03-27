@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>메시지 월</title>
+  <style>
+    body {
+      background: black;
+      color: white;
+      font-family: Arial;
+    }
+    #list {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      padding: 20px;
+    }
+    .card {
+      background: #222;
+      padding: 20px;
+      border-radius: 10px;
+      font-size: 25px;
+    }
+  </style>
+</head>
+<body>
+  <h1>💬 참여 메시지</h1>
+  <div id="list"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, onSnapshot, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA5jr2U1r5FafSC6493ePuv-g6qtZ_iqyw",
+      authDomain: "quality-campaign.firebaseapp.com",
+      projectId: "quality-campaign",
+      storageBucket: "quality-campaign.firebasestorage.app",
+      messagingSenderId: "247809746725",
+      appId: "1:247809746725:web:7f8e0950a475793afe1ccc",
+      measurementId: "G-X9D2FWTB1T"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const q = query(
+      collection(db, "messages"),
+      orderBy("time", "desc"),
+      limit(20)
+    );
+
+    onSnapshot(q, (snapshot) => {
+      let html = "";
+      snapshot.forEach(doc => {
+        html += `<div class="card">${doc.data().text}</div>`;
+      });
+      document.getElementById("list").innerHTML = html;
+    });
+  </script>
+</body>
+</html>
