@@ -44,31 +44,23 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 10px;
+      padding: 8px;
       overflow: hidden;
     }
 
     .msg {
-      font-weight: bold;
       text-align: center;
-
-      /* 🔥 핵심: 줄바꿈 + 안전 영역 */
-      white-space: normal;
+      font-weight: bold;
       word-break: break-word;
-      max-width: 100%;
+      width: 100%;
+      line-height: 1.2;
 
-      /* 🔥 핵심: 제자리 애니메이션 */
       animation: floatSafe 4s ease-in-out infinite alternate;
     }
 
-    /* ❗ 절대 좌우 크게 이동 안함 */
     @keyframes floatSafe {
-      0% {
-        transform: translateY(-5px) scale(1);
-      }
-      100% {
-        transform: translateY(5px) scale(1.03);
-      }
+      0% { transform: translateY(-5px); }
+      100% { transform: translateY(5px); }
     }
   </style>
 </head>
@@ -101,8 +93,12 @@
     return colors[Math.floor(Math.random() * colors.length)];
   }
 
-  function randomSize() {
-    return Math.floor(Math.random() * 14) + 18;
+  // 🔥 글자 크기 자동 조절 (핵심)
+  function autoFontSize(textLength) {
+    if (textLength > 80) return 14;
+    if (textLength > 50) return 16;
+    if (textLength > 30) return 18;
+    return 22;
   }
 
   function createCellMessage(cell, text) {
@@ -110,7 +106,7 @@
     div.className = "msg";
     div.innerText = text;
 
-    div.style.fontSize = randomSize() + "px";
+    div.style.fontSize = autoFontSize(text.length) + "px";
     div.style.color = randomColor();
 
     cell.appendChild(div);
@@ -133,11 +129,17 @@
       cells.push(cell);
     }
 
-    let i = 0;
+    // 🔥 랜덤 섞기 (핵심)
+    let messages = [];
     snapshot.forEach(doc => {
+      messages.push(doc.data().text);
+    });
+
+    messages.sort(() => Math.random() - 0.5);
+
+    messages.forEach((text, i) => {
       if (cells[i]) {
-        createCellMessage(cells[i], doc.data().text);
-        i++;
+        createCellMessage(cells[i], text);
       }
     });
   });
