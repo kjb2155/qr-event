@@ -41,30 +41,34 @@
     }
 
     .cell {
-      position: relative;
-      overflow: hidden;
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 10px;
+      overflow: hidden;
     }
 
     .msg {
       font-weight: bold;
       text-align: center;
 
-      /* 🔥 핵심 수정 */
-      white-space: normal;       /* 줄바꿈 허용 */
-      word-break: break-word;    /* 긴 단어도 줄바꿈 */
+      /* 🔥 핵심: 줄바꿈 + 안전 영역 */
+      white-space: normal;
+      word-break: break-word;
       max-width: 100%;
-      max-height: 100%;
 
-      animation: floatMove 6s ease-in-out infinite alternate;
+      /* 🔥 핵심: 제자리 애니메이션 */
+      animation: floatSafe 4s ease-in-out infinite alternate;
     }
 
-    @keyframes floatMove {
-      0% { transform: translate(-10px, -5px); }
-      100% { transform: translate(10px, 5px); }
+    /* ❗ 절대 좌우 크게 이동 안함 */
+    @keyframes floatSafe {
+      0% {
+        transform: translateY(-5px) scale(1);
+      }
+      100% {
+        transform: translateY(5px) scale(1.03);
+      }
     }
   </style>
 </head>
@@ -98,7 +102,7 @@
   }
 
   function randomSize() {
-    return Math.floor(Math.random() * 16) + 18; // 살짝 줄임 (가독성↑)
+    return Math.floor(Math.random() * 14) + 18;
   }
 
   function createCellMessage(cell, text) {
