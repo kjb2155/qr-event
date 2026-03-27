@@ -76,6 +76,8 @@
 
   const container = document.getElementById("container");
 
+  let existingMessages = new Set(); // 🔥 이미 출력된 메시지 저장
+
   function randomColor() {
     const colors = ["#00d4ff", "#66ffcc", "#ffffff", "#99ccff"];
     return colors[Math.floor(Math.random() * colors.length)];
@@ -95,7 +97,7 @@
     };
   }
 
-  function createMessage(text) {
+  function createMessage(id, text) {
     const div = document.createElement("div");
     div.className = "msg";
     div.innerText = text;
@@ -108,27 +110,24 @@
     div.style.left = pos.left + "%";
 
     container.appendChild(div);
+
+    existingMessages.add(id); // 🔥 등록
   }
 
   const q = query(
     collection(db, "messages"),
     orderBy("time", "desc"),
-    limit(50) // 🔥 50개
+    limit(50)
   );
 
   onSnapshot(q, (snapshot) => {
-    container.innerHTML = "";
-
-    let messages = [];
     snapshot.forEach(doc => {
-      messages.push(doc.data().text);
-    });
+      const id = doc.id;
 
-    // 🔥 완전 랜덤 섞기
-    messages.sort(() => Math.random() - 0.5);
-
-    messages.forEach(text => {
-      createMessage(text);
+      // 🔥 이미 있는 메시지는 건너뜀
+      if (!existingMessages.has(id)) {
+        createMessage(id, doc.data().text);
+      }
     });
   });
 </script>
