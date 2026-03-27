@@ -8,13 +8,9 @@
       overflow: hidden;
       font-family: Arial;
       color: white;
-    }
-
-    /* 🎨 배경 애니메이션 */
-    body {
       background: linear-gradient(-45deg, #001f3f, #003366, #004080, #00264d);
       background-size: 400% 400%;
-      animation: gradientMove 15s ease infinite;
+      animation: gradientMove 8s ease infinite;
     }
 
     @keyframes gradientMove {
@@ -23,12 +19,22 @@
       100% { background-position: 0% 50%; }
     }
 
+    .title {
+      position: absolute;
+      top: 20px;
+      left: 30px;
+      font-size: 32px;
+      font-weight: bold;
+      z-index: 10;
+    }
+
     #container {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
       grid-template-rows: repeat(5, 1fr);
       width: 100vw;
-      height: 100vh;
+      height: calc(100vh - 80px);
+      margin-top: 80px;
       padding: 10px;
       box-sizing: border-box;
       gap: 10px;
@@ -43,22 +49,16 @@
       position: absolute;
       font-weight: bold;
       white-space: nowrap;
-      animation: float 10s linear infinite;
+      animation: floatMove 6s ease-in-out infinite alternate;
     }
 
-    @keyframes float {
-      0% { transform: translate(0, 0); }
-      50% { transform: translate(20px, -20px); }
-      100% { transform: translate(0, 0); }
-    }
-
-    .title {
-      position: absolute;
-      top: 20px;
-      left: 30px;
-      font-size: 30px;
-      font-weight: bold;
-      opacity: 0.8;
+    @keyframes floatMove {
+      0% {
+        transform: translate(-20px, -10px);
+      }
+      100% {
+        transform: translate(20px, 10px);
+      }
     }
   </style>
 </head>
@@ -92,7 +92,7 @@
   }
 
   function randomSize() {
-    return Math.floor(Math.random() * 20) + 20; // 20~40px
+    return Math.floor(Math.random() * 20) + 20;
   }
 
   function createCellMessage(cell, text) {
@@ -102,8 +102,10 @@
 
     div.style.fontSize = randomSize() + "px";
     div.style.color = randomColor();
-    div.style.top = Math.random() * 50 + "%";
-    div.style.left = Math.random() * 30 + "%";
+
+    // 중앙 기준 배치
+    div.style.top = "30%";
+    div.style.left = "20%";
 
     cell.appendChild(div);
   }
