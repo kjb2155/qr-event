@@ -29,30 +29,18 @@
     }
 
     #container {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      grid-template-rows: repeat(5, 1fr);
+      position: relative;
       width: 100vw;
       height: calc(100vh - 80px);
       margin-top: 80px;
-      padding: 10px;
-      box-sizing: border-box;
-      gap: 10px;
-    }
-
-    .cell {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 8px;
-      overflow: hidden;
     }
 
     .msg {
+      position: absolute;
       text-align: center;
       font-weight: bold;
       word-break: break-word;
-      width: 100%;
+      max-width: 220px;
       line-height: 1.2;
 
       animation: floatSafe 4s ease-in-out infinite alternate;
@@ -93,15 +81,21 @@
     return colors[Math.floor(Math.random() * colors.length)];
   }
 
-  // 🔥 글자 크기 자동 조절 (핵심)
-  function autoFontSize(textLength) {
-    if (textLength > 80) return 14;
-    if (textLength > 50) return 16;
-    if (textLength > 30) return 18;
+  function autoFontSize(len) {
+    if (len > 80) return 14;
+    if (len > 50) return 16;
+    if (len > 30) return 18;
     return 22;
   }
 
-  function createCellMessage(cell, text) {
+  function randomPosition() {
+    return {
+      top: Math.random() * 90,
+      left: Math.random() * 90
+    };
+  }
+
+  function createMessage(text) {
     const div = document.createElement("div");
     div.className = "msg";
     div.innerText = text;
@@ -109,38 +103,32 @@
     div.style.fontSize = autoFontSize(text.length) + "px";
     div.style.color = randomColor();
 
-    cell.appendChild(div);
+    const pos = randomPosition();
+    div.style.top = pos.top + "%";
+    div.style.left = pos.left + "%";
+
+    container.appendChild(div);
   }
 
   const q = query(
     collection(db, "messages"),
     orderBy("time", "desc"),
-    limit(30)
+    limit(50) // 🔥 50개
   );
 
   onSnapshot(q, (snapshot) => {
     container.innerHTML = "";
 
-    let cells = [];
-    for (let i = 0; i < 30; i++) {
-      const cell = document.createElement("div");
-      cell.className = "cell";
-      container.appendChild(cell);
-      cells.push(cell);
-    }
-
-    // 🔥 랜덤 섞기 (핵심)
     let messages = [];
     snapshot.forEach(doc => {
       messages.push(doc.data().text);
     });
 
+    // 🔥 완전 랜덤 섞기
     messages.sort(() => Math.random() - 0.5);
 
-    messages.forEach((text, i) => {
-      if (cells[i]) {
-        createCellMessage(cells[i], text);
-      }
+    messages.forEach(text => {
+      createMessage(text);
     });
   });
 </script>
