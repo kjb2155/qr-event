@@ -43,6 +43,7 @@
       max-width: 240px;
       padding: 12px;
       border-radius: 14px;
+
       background: rgba(0,0,0,0.28);
       backdrop-filter: blur(4px);
 
@@ -50,12 +51,6 @@
       line-height: 1.4;
 
       box-shadow: 0 0 15px rgba(0,0,0,0.2);
-
-      transition: transform 0.3s ease;
-    }
-
-    .msg:hover {
-      transform: scale(1.05);
     }
 
     .new {
@@ -180,15 +175,17 @@ function startFloating(div) {
   let x = parseFloat(div.style.left);
   let y = parseFloat(div.style.top);
 
-  let dx = (Math.random() - 0.5) * 0.03;
-  let dy = (Math.random() - 0.5) * 0.03;
+  // 이동 속도
+  let dx = (Math.random() - 0.5) * 0.02;
+  let dy = (Math.random() - 0.5) * 0.02;
 
   function move() {
 
     x += dx;
     y += dy;
 
-    if (x < 0 || x > 90) dx *= -1;
+    // 벽 반사
+    if (x < 0 || x > 88) dx *= -1;
     if (y < 0 || y > 88) dy *= -1;
 
     div.style.left = x + "%";
@@ -197,7 +194,7 @@ function startFloating(div) {
     requestAnimationFrame(move);
   }
 
-  move();
+  requestAnimationFrame(move);
 }
 
 function createMessage(id, text, name) {
@@ -227,6 +224,7 @@ function createMessage(id, text, name) {
 
   container.appendChild(div);
 
+  // 🔥 움직임 시작
   startFloating(div);
 
   existingMessages.add(id);
@@ -235,7 +233,7 @@ function createMessage(id, text, name) {
 const q = query(
   collection(db, "messages"),
   orderBy("time", "desc"),
-  limit(150) // 🔥 최대 150개
+  limit(150)
 );
 
 onSnapshot(q, (snapshot) => {
