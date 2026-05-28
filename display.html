@@ -69,9 +69,9 @@
 
       position: absolute;
 
-      max-width: 110px;
+      max-width: 140px;
 
-      padding: 4px 6px;
+      padding: 6px 8px;
 
       border-radius: 10px;
 
@@ -189,15 +189,15 @@ function randomColor() {
 
 function autoFontSize(len) {
 
-  if (len > 120) return "0.45rem";
+  if (len > 120) return "0.55rem";
 
-  if (len > 80) return "0.55rem";
+  if (len > 80) return "0.65rem";
 
-  if (len > 50) return "0.65rem";
+  if (len > 50) return "0.75rem";
 
-  if (len > 30) return "0.75rem";
+  if (len > 30) return "0.9rem";
 
-  return "0.85rem";
+  return "1rem";
 }
 
 function isOverlapping(x, y) {
