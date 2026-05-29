@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Export Messages</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #0b1e35;
+      color: white;
+      text-align: center;
+      padding-top: 100px;
+    }
+
+    button {
+      padding: 20px 40px;
+      font-size: 20px;
+      border: none;
+      border-radius: 10px;
+      background: #00d4ff;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>📥 메시지 다운로드</h1>
+
+<button onclick="downloadExcel()">
+  Excel 다운로드
+</button>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+
+import {
+  getFirestore,
+  collection,
+  getDocs
+}
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+
+  apiKey: "AIzaSyA5jr2U1r5FafSC6493ePuv-g6qtZ_iqyw",
+
+  authDomain: "quality-campaign.firebaseapp.com",
+
+  projectId: "quality-campaign",
+
+  storageBucket: "quality-campaign.firebasestorage.app",
+
+  messagingSenderId: "247809746725",
+
+  appId: "1:247809746725:web:7f8e0950a475793afe1ccc",
+
+  measurementId: "G-X9D2FWTB1T"
+};
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+window.downloadExcel = async function () {
+
+  const querySnapshot = await getDocs(
+    collection(db, "messages")
+  );
+
+  let data = [];
+
+  querySnapshot.forEach((doc) => {
+
+    const item = doc.data();
+
+    data.push({
+
+      Name: item.name || "",
+
+      Message: item.text || "",
+
+      Time: new Date(item.time).toLocaleString()
+    });
+  });
+
+  // Excel 생성
+  const worksheet = XLSX.utils.json_to_sheet(data);
+
+  const workbook = XLSX.utils.book_new();
+
+  XLSX.utils.book_append_sheet(
+    workbook,
+    worksheet,
+    "Messages"
+  );
+
+  XLSX.writeFile(
+    workbook,
+    "messages.xlsx"
+  );
+};
+
+</script>
+
+</body>
+</html>
